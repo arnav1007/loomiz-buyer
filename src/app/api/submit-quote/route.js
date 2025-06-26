@@ -1,18 +1,8 @@
 // app/api/submit-quote/route.js
 import { NextResponse } from 'next/server';
-import { v2 as cloudinary } from 'cloudinary';
 import dbConnect from '@/lib/mongoose';
 import Quote from '@/models/Quote';
-import { writeFile, mkdir, unlink } from 'fs/promises';
-import { join } from 'path';
-import { v4 as uuidv4 } from 'uuid';
-
-// Configure Cloudinary
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET
-});
+import { uploadToCloudinary } from '@/lib/cloudinary';
 
 export async function POST(request) {
   try {
@@ -42,14 +32,6 @@ export async function POST(request) {
     };
 
     console.log(quoteData);
-
-    // Create temp directory for file processing if it doesn't exist
-    const tempDir = join(process.cwd(), 'tmp');
-    try {
-      await mkdir(tempDir, { recursive: true });
-    } catch (err) {
-      if (err.code !== 'EEXIST') throw err;
-    }
 
     // Process all files from formData
     for (const [key, value] of formData.entries()) {
@@ -91,29 +73,13 @@ export async function POST(request) {
         continue;
       }
       
-      // Process the file
+      // Process the file - convert to buffer and upload directly
       const bytes = await value.arrayBuffer();
       const buffer = Buffer.from(bytes);
       
-      // Create a unique filename
-      const tempFilePath = join(tempDir, `${uuidv4()}-${value.name}`);
-      await writeFile(tempFilePath, buffer);
-      
-      // Upload to Cloudinary
+      // Upload directly to Cloudinary using the utility function
       try {
-        const result = await new Promise((resolve, reject) => {
-          cloudinary.uploader.upload(
-            tempFilePath,
-            { folder: category },
-            (error, result) => {
-              if (error) reject(error);
-              else resolve(result);
-            }
-          );
-        });
-
-        // Delete the temp file after successful upload
-        await unlink(tempFilePath);
+        const result = await uploadToCloudinary(buffer, category);
 
         // Add the Cloudinary URL to the appropriate array in quoteData
         if (category === 'techpack') {
@@ -123,12 +89,7 @@ export async function POST(request) {
         }
       } catch (uploadError) {
         console.error(`Error uploading file to Cloudinary: ${uploadError}`);
-        // Optionally delete temp file if upload failed
-        try {
-          await unlink(tempFilePath);
-        } catch (deleteError) {
-          console.error('Error deleting temp file after failed upload:', deleteError);
-        }
+        // Continue processing other files even if one fails
       }
     }
 
