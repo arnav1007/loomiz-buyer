@@ -1,0 +1,281 @@
+Buyer Portal Documentation
+=========================
+
+Overview
+--------
+Buyer Portal is a web application built with Next.js (React 19), designed to streamline the process for buyers to request quotes, track orders, manage accounts, and interact with manufacturers. The portal features a modern, responsive UI, OTP-based authentication, and a robust backend using MongoDB via Mongoose.
+
+Table of Contents
+-----------------
+1. Project Structure
+2. Setup & Installation
+3. Core Features
+4. Key Components
+5. Data Models
+6. Authentication Flow
+7. Styling & Fonts
+8. Development & Deployment
+9. Dependencies
+10. Extending the Project
+11. APIs & Components
+
+Project Structure
+-----------------
+BuyerPortal/
+├── src/
+│   ├── app/
+│   │   ├── components/         # Reusable UI components (navbar, sidebar, OTP popup, etc.)
+│   │   ├── login/              # Login and signup pages
+│   │   ├── rfq/                # Request for Quotation (RFQ) main page
+│   │   ├── rfq-history/        # RFQ history and details
+│   │   ├── ordertracking/      # Order tracking and details
+│   │   ├── buyer-form/         # Buyer registration form
+│   │   ├── account/            # User account management
+│   │   ├── layout.js           # Global layout and navigation logic
+│   │   └── globals.css         # Global styles
+│   ├── models/                 # Mongoose data models (Company, Order, Quote)
+│   └── lib/                    # Utility libraries (MongoDB, Cloudinary, etc.)
+├── public/                     # Static assets (logos, icons, etc.)
+├── package.json                # Project dependencies and scripts
+├── README.md                   # Project overview and setup
+└── ...                         # Config files (eslint, postcss, etc.)
+
+Setup & Installation
+--------------------
+1. Clone the repository and install dependencies:
+   npm install
+   # or
+   yarn install
+
+2. Run the development server:
+   npm run dev
+   # or
+   yarn dev
+
+3. Open http://localhost:3000 in your browser.
+
+Core Features
+-------------
+- OTP-based Authentication: Secure login and signup using phone number verification.
+- RFQ Management: Create, view, and track Requests for Quotation.
+- Order Tracking: Step-by-step order status updates, including production and delivery.
+- Account Management: Manage user and company details.
+- Responsive UI: Works seamlessly on desktop and mobile devices.
+- File Uploads: Support for tech packs, images, and certificates via Cloudinary.
+
+Key Components
+--------------
+1. Layout & Navigation
+   - layout.js: Handles global layout, responsive sidebar, and navbar.
+   - navbar.jsx: Top navigation bar with quick actions (New RFQ, notifications, profile).
+   - sidebar.jsx: Main navigation menu with links to dashboard sections.
+
+2. Authentication
+   - login/page.jsx: Switches between Sign In and Sign Up forms, triggers OTP popup.
+   - otpPopup.jsx: Modal for entering and verifying OTP codes.
+
+3. RFQ & Order Management
+   - rfq/page.jsx: Main interface for creating and managing RFQs.
+   - rfq-history/page.jsx: List and status of past RFQs.
+   - rfq-history/details/[id]/page.jsx: Detailed view for a specific RFQ.
+   - ordertracking/page.jsx & [id]/page.jsx: Track order progress and details.
+
+4. Account & Registration
+   - buyer-form/page.jsx: Multi-step form for registering a new buyer/company.
+   - account/page.jsx: View and edit account information.
+
+Data Models
+-----------
+1. Company
+   - Stores company profile, contact, address, and financial details.
+   - Fields: contactPersonName, contactPhoneNo, registeredCompanyName, gstTaxId, address, bankBranchName, etc.
+
+2. Order
+   - Represents a placed order, linked to a quote.
+   - Tracks status, production steps, manufacturer info, and design details.
+   - Fields: orderNumber, status, loomizTeam, manufacturer, productionSteps, etc.
+
+3. Quote
+   - Represents an RFQ submitted by a buyer.
+   - Includes shipping, quantity, pricing, files, and status.
+   - Fields: shippingAddress, quantity, leadTime, targetPrice, fabricComposition, status, etc.
+
+Authentication Flow
+-------------------
+- Sign Up: User enters details → Clicks "Send OTP" → Receives OTP → Enters OTP in popup → On success, account is created.
+- Sign In: User enters phone number → Clicks "Send OTP" → Receives OTP → Enters OTP in popup → On success, logged in.
+
+Styling & Fonts
+---------------
+- Uses Tailwind CSS for utility-first styling.
+- Custom fonts loaded via next/font (Geist, Geist Mono).
+- Responsive design for mobile and desktop.
+
+Development & Deployment
+------------------------
+- Development: Use npm run dev or yarn dev.
+- Linting: npm run lint
+- Build: npm run build
+- Deployment: Can be deployed on Vercel or any Node.js-compatible host.
+
+Dependencies
+------------
+- Frontend: next, react, react-dom, lucide-react
+- Backend/Data: mongoose, cloudinary, uuid
+- Styling: tailwindcss, postcss, autoprefixer
+- Utilities: axios
+
+Extending the Project
+---------------------
+- Add new pages: Create a new folder in src/app/ and add a page.jsx.
+- Add new models: Define a new schema in src/models/.
+- Add new API routes: Use the src/app/api/ directory.
+- Customize UI: Edit or add components in src/app/components/.
+
+APIs & Components
+=================
+
+API Endpoints
+-------------
+1. /api/orders/[id]
+   - GET: Fetches order details by quote ID.
+   - Request: GET /api/orders/{quoteId}
+   - Response: JSON object containing order data with populated quote information.
+   - Example Response:
+     {
+       "orderNumber": "ORD123",
+       "status": "Confirmed",
+       "loomizTeam": { "name": "John Doe", "phoneNumber": "1234567890" },
+       "manufacturer": { "assignedTo": "Manufacturer A", "capability": "High" },
+       "productionSteps": { "sampleConfirmation": "Completed", "fabricInhoused": "In Progress" }
+     }
+
+2. /api/rfq/history
+   - GET: Retrieves a list of all RFQs, sorted by creation date.
+   - Request: GET /api/rfq/history
+   - Response: Array of JSON objects containing RFQ history with time and duration.
+   - Example Response:
+     [
+       {
+         "_id": "rfq123",
+         "orderNotes": "Sample RFQ",
+         "time": "Today",
+         "duration": "2 hours",
+         "quantity": 100,
+         "leadTime": "2 weeks",
+         "targetPrice": 500,
+         "fabricComposition": "Cotton"
+       }
+     ]
+
+3. /api/rfq/details
+   - GET: Fetches detailed information for a specific RFQ by ID.
+   - Request: GET /api/rfq/details?id={rfqId}
+   - Response: JSON object containing detailed RFQ data including file details.
+   - Example Response:
+     {
+       "id": "rfq123",
+       "shippingAddress": "123 Main St",
+       "quantity": 100,
+       "leadTime": "2 weeks",
+       "targetPrice": 500,
+       "fabricComposition": "Cotton",
+       "files": {
+         "techpack": { "name": "techpack.pdf", "url": "https://cloudinary.com/techpack.pdf" },
+         "productImages": [{ "name": "product1.jpg", "url": "https://cloudinary.com/product1.jpg" }]
+       }
+     }
+
+4. /api/submit-quote
+   - POST: Submits a new quote.
+   - Request: POST /api/submit-quote (multipart/form-data)
+   - Response: JSON object indicating success or failure.
+   - Example Request:
+     Form Data:
+     - shippingAddress: "123 Main St"
+     - quantity: 100
+     - leadTime: "2 weeks"
+     - targetPrice: 500
+     - fabricComposition: "Cotton"
+     - techpackFile: (file)
+     - productImagesFiles: (files)
+   - Example Response:
+     {
+       "success": true,
+       "message": "Quote submitted successfully",
+       "data": { "id": "quote123", "shippingAddress": "123 Main St", ... }
+     }
+
+5. /api/company
+   - POST: Saves company registration data.
+   - Request: POST /api/company (multipart/form-data)
+   - Response: JSON object indicating success or failure.
+   - Example Request:
+     Form Data:
+     - contactPersonName: "John Doe"
+     - contactPhoneNo: "1234567890"
+     - contactEmail: "john@example.com"
+     - registeredCompanyName: "ABC Corp"
+     - gstTaxId: "GST123"
+     - taxRegistrationCert: (file)
+     - bankCertificate: (file)
+   - Example Response:
+     {
+       "success": true,
+       "message": "Company data saved successfully",
+       "data": { "id": "company123", "contactPersonName": "John Doe", ... }
+     }
+
+Components
+----------
+1. Navbar (navbar.jsx)
+   - Displays the top navigation bar with quick actions like "New RFQ", notifications, and profile icons.
+   - Responsive design with mobile-specific menu toggle.
+   - Usage: Import and include in layout.js.
+
+2. Sidebar (sidebar.jsx)
+   - Provides the main navigation menu with links to dashboard sections.
+   - Handles active state highlighting and mobile responsiveness.
+   - Usage: Import and include in layout.js.
+
+3. OTP Popup (otpPopup.jsx)
+   - Modal for entering and verifying OTP codes during login/signup.
+   - Features auto-focus, resend functionality, and a countdown timer.
+   - Usage: Import and trigger from login/page.jsx.
+
+4. Login/Signup (login/page.jsx)
+   - Switches between Sign In and Sign Up forms.
+   - Triggers OTP popup for phone number verification.
+   - Usage: Access via /login route.
+
+5. RFQ Management (rfq/page.jsx)
+   - Main interface for creating and managing Requests for Quotation.
+   - Handles form submission and file uploads.
+   - Usage: Access via /rfq route.
+
+6. RFQ History (rfq-history/page.jsx)
+   - Displays a list of past RFQs with status and details.
+   - Links to detailed views for each RFQ.
+   - Usage: Access via /rfq-history route.
+
+7. Order Tracking (ordertracking/page.jsx & [id]/page.jsx)
+   - Tracks order progress and displays step-by-step status updates.
+   - Shows detailed order information and production steps.
+   - Usage: Access via /ordertracking route.
+
+8. Buyer Registration (buyer-form/page.jsx)
+   - Multi-step form for registering a new buyer/company.
+   - Handles file uploads and data validation.
+   - Usage: Access via /buyer-form route.
+
+9. Account Management (account/page.jsx)
+   - Allows users to view and edit their account information.
+   - Usage: Access via /account route.
+
+Additional Notes
+----------------
+- The project is structured for scalability, with clear separation of concerns.
+- All forms and popups are designed for accessibility and mobile usability.
+- The backend is ready for integration with real authentication and file storage services.
+
+For more details, refer to the codebase and comments within each file. If you need API documentation or a deeper dive into a specific module, let me know! 

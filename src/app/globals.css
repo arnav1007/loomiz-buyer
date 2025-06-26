@@ -1,0 +1,139 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+
+
+body {
+  background: #F9F7F7;
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Custom fonts */
+@font-face {
+  font-family: 'NSmedium';
+  src: local("NSmedium"), url('../app/Fonts/noto-sans/NotoSans-Medium.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'NSextrabold';
+  src: local("NSextrabold"), url('../app/Fonts/noto-sans/NotoSans-ExtraBold.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'NSregular';
+  src: local("NSregular"), url('../app/Fonts/noto-sans/NotoSans-Regular.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Smedium';
+  src: local("Smedium"), url('../app/Fonts/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-Medium.woff') format('woff');
+}
+@font-face {
+  font-family: 'Sbold';
+  src: local("Sbold"), url('../app/Fonts/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-Bold.woff') format('woff');
+}
+@font-face {
+  font-family: 'Sregular';
+  src: local("Sregular"), url('../app/Fonts/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-Regular.woff') format('woff');
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes progress {
+  0% { width: 0; }
+  100% { width: 100%; }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.animate-progress {
+  animation: progress 5s linear forwards;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+
+
+/* Add animations for popup effects */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes progress {
+  0% {
+    width: 0%;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+/* Apply animations through utility classes */
+.animate-fadeIn {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+.animate-progress {
+  animation: progress 5s linear forwards;
+}
+
+/* Scrollbar styling for the popup form */
+.overflow-y-auto {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e0 #f7fafc;
+}
+
+.overflow-y-auto::-webkit-scrollbar {
+  width: 8px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-track {
+  background: #f7fafc;
+  border-radius: 8px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb {
+  background-color: #cbd5e0;
+  border-radius: 8px;
+}
+
+/* Additional global styles */
+html, body {
+  height: 100%;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+/* Custom sizing for file upload components */
+input[type="file"] {
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
+}
+
+/* Style for the file upload buttons */
+.file-input-label {
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
