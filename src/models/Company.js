@@ -83,6 +83,4 @@ const CompanySchema = new mongoose.Schema({
 }, { timestamps: true });
 
 // Check if the model is already defined to prevent overwriting during hot reloads in development
-const Company = mongoose.models.Company || mongoose.model('Company', CompanySchema);
-
-export default Company;
+export default mongoose.models.Company || mongoose.model('Company', CompanySchema);

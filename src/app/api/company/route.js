@@ -1,6 +1,6 @@
 // src/app/api/company/route.js
 import { NextResponse } from 'next/server';
-import dbConnect from '@/lib/mongodb';
+import dbConnect from '@/lib/mongoose';
 import Company from '@/models/Company';
 import { uploadToCloudinary } from '@/lib/cloudinary';
 
