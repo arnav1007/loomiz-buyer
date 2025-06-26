@@ -2,10 +2,6 @@
 import { useState, useEffect } from 'react';
 import OrderTracking from "@/app/components/ordertrack/ordertracking";
 
-// Force dynamic rendering to prevent caching
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
-
 export default function OrderDetailsPage() {
   const [acceptedQuotes, setAcceptedQuotes] = useState([]);
   const [loading, setLoading] = useState(true);
